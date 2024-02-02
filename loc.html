@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Location Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #000;
+            color: #fff;
+        }
+
+        #locationDisplay {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="locationDisplay"></div>
+
+    <script>
+        function getIpAddress() {
+            // You may want to use a more secure method to get the IP
+            // This is just a simple example
+            fetch('https://api64.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ipAddress = data.ip;
+                    convertIpToLocation(ipAddress);
+                })
+                .catch(error => console.error('Error fetching IP:', error));
+        }
+
+        function convertIpToLocation(ip) {
+            fetch(`http://ip-api.com/json/${ip}`)
+                .then(response => response.json())
+                .then(data => {
+                    const detailedLocation = `${data.city}, ${data.regionName}, ${data.zip}, ${data.country}, ${data.query}`;
+                    const mapLink = `https://www.google.com/maps?q=${data.lat},${data.lon}`;
+                    displayLocation(detailedLocation, mapLink);
+                })
+                .catch(error => console.error('Error converting IP to location:', error));
+        }
+
+        function displayLocation(location, mapLink) {
+            const locationDisplay = document.getElementById('locationDisplay');
+            locationDisplay.innerHTML = `<p>${location}</p><p><a href="${mapLink}" target="_blank">View on Map</a></p>`;
+        }
+
+        // Call getIpAddress() when the page loads
+        getIpAddress();
+    </script>
+</body>
+</html>
